@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calorie Tracker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f79f9f; /* pink background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .tracker {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 280px;
+    box-sizing: border-box;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+  }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  input[type="text"]::placeholder,
+  input[type="number"]::placeholder {
+    color: #d67373;
+  }
+  button {
+    width: 100%;
+    background: #ff6f6f;
+    border: none;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 7px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  button:hover {
+    background: #e35555;
+  }
+  .food-list {
+    font-weight: bold;
+  }
+  .items {
+    margin-top: 8px;
+  }
+  .food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffeaea;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin: 7px 0;
+  }
+  .food-item span {
+    font-weight: normal;
+  }
+  .remove-btn {
+    background: #ff6f6f;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .remove-btn:hover {
+    background: #e35555;
+  }
+  .total {
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="tracker">
+    <h2>Calorie Tracker</h2>
+    <label for="food">Food:</label>
+    <input type="text" id="food" placeholder="Enter food item" />
+    <label for="calories">Calories:</label>
+    <input type="number" id="calories" placeholder="Enter calories" min="0" />
+    <button id="addFoodBtn">Add Food</button>
+    
+    <div class="food-list">
+      Food List:
+      <div id="items" class="items"></div>
+      <div id="totalCalories" class="total">
+        Total Calories: 0
+      </div>
+    </div>
+  </div>
+
+<script>
+  const foodInput = document.getElementById('food');
+  const caloriesInput = document.getElementById('calories');
+  const addFoodBtn = document.getElementById('addFoodBtn');
+  const itemsContainer = document.getElementById('items');
+  const totalCaloriesDisplay = document.getElementById('totalCalories');
+
+  let foods = [];
+  let totalCalories = 0;
+
+  function renderFoods() {
+    itemsContainer.innerHTML = '';
+    foods.forEach((food, index) => {
+      const foodDiv = document.createElement('div');
+      foodDiv.classList.add('food-item');
+
+      const foodText = document.createElement('span');
+      foodText.textContent = `${food.name} - ${food.calories} kcal`;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.classList.add('remove-btn');
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => {
+        removeFood(index);
+      };
+
+      foodDiv.appendChild(foodText);
+      foodDiv.appendChild(removeBtn);
+      itemsContainer.appendChild(foodDiv);
+    });
+
+    totalCalories = foods.reduce((sum, food) => sum + parseInt(food.calories), 0);
+    totalCaloriesDisplay.textContent = `Total Calories: ${totalCalories}`;
+  }
+
+  function removeFood(index) {
+    foods.splice(index, 1);
+    renderFoods();
+  }
+
+  addFoodBtn.addEventListener('click', () => {
+    const foodName = foodInput.value.trim();
+    const calorieVal = caloriesInput.value.trim();
+
+    if (!foodName) {
+      alert('Please enter a food item.');
+      return;
+    }
+    if (!calorieVal || isNaN(calorieVal) || calorieVal <= 0) {
+      alert('Please enter a valid calorie amount.');
+      return;
+    }
+
+    foods.push({ name: foodName, calories: parseInt(calorieVal) });
+    renderFoods();
+    
+    // Clear inputs for next entry
+    foodInput.value = '';
+    caloriesInput.value = '';
+    foodInput.focus();
+  });
+
+  // Initial render
+  renderFoods();
+</script>
+</body>
+</html>
